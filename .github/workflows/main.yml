@@ -1,9 +1,8 @@
-name: Deploy to AKS from ACR
-
+name: build_deploy_aks
 on:
   push:
-    branches:
-      - main  # Adjust branch name as needed
+    paths:
+      - "azure-vote/**"
 
 jobs:
   build-and-deploy:
@@ -43,9 +42,9 @@ jobs:
           cluster-name: <cluster-name>
           resource-group: <resource-group-name>
 
-    - name: Apply Kubernetes Secret
-      run: |
-          kubectl apply -f path/to/acr-secret.yaml
+   # - name: Apply Kubernetes Secret
+   #   run: |
+     #     kubectl apply -f path/to/acr-secret.yaml
 
     - name: Deploy to AKS
       run: |

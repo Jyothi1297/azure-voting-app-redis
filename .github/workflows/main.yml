@@ -39,8 +39,8 @@ jobs:
       uses: azure/aks-set-context@v1
       with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          cluster-name: <cluster-name>
-          resource-group: <resource-group-name>
+          cluster-name: project
+          resource-group: test
 
    # - name: Apply Kubernetes Secret
    #   run: |
@@ -48,4 +48,4 @@ jobs:
 
     - name: Deploy to AKS
       run: |
-          kubectl apply -f path/to/deployment.yaml
+          kubectl apply -f azure-vote-all-in-one-redis.yaml

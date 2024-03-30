@@ -17,14 +17,10 @@ spec:
       containers:
       - name: azure-vote-back
         image: nani01071993.azurecr.io/vote:latest
-        # imagePullPolicy: Always
-      #  env:
-     #   - name: ALLOW_EMPTY_PASSWORD
-   #       value: "yes"
         ports:
         - containerPort: 8080
-    imagePullSecrets:
-    - name: acr-secret
+      imagePullSecrets:
+      - name: acr-secret
 ---
 apiVersion: v1
 kind: Service
@@ -49,7 +45,7 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
-  minReadySeconds: 5 
+  minReadySeconds: 5
   template:
     metadata:
       labels:
@@ -59,7 +55,7 @@ spec:
         "beta.kubernetes.io/os": linux
       containers:
       - name: azure-vote-front
-        image: test0107.azurecr.io/test
+        image: nani01071993.azurecr.io/vote:latest
         ports:
         - containerPort: 80
         resources:

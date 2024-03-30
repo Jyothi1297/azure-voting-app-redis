@@ -16,13 +16,15 @@ spec:
         "beta.kubernetes.io/os": linux
       containers:
       - name: azure-vote-back
-        image: test0107.azurecr.io/test
-        env:
-        - name: ALLOW_EMPTY_PASSWORD
-          value: "yes"
+        image: nani01071993.azurecr.io/vote:latest
+         imagePullPolicy: Always
+      #  env:
+     #   - name: ALLOW_EMPTY_PASSWORD
+   #       value: "yes"
         ports:
-        - containerPort: 6379
-          name: redis
+        - containerPort: 8080
+    imagePullSecrets:
+    - name: acr-secret
 ---
 apiVersion: v1
 kind: Service

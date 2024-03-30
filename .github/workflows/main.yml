@@ -1,51 +1,58 @@
-name: build_deploy_aks
+name: Deploy to AKS from ACR
+
 on:
   push:
-    paths:
-      - "azure-vote/**"
+    branches:
+      - main  # Adjust branch name as needed
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Set up Azure CLI
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+    - name: Generate Image Tag
+      id: generate_tag
+      run: echo "::set-output name=image_tag::latest"
+
+    - name: Update deployment.yaml
+      run: |
+       sed -i'' "s|image:[^:]*$|image: nani01071993.azurecr.io/asg:${{ steps.get_image_tag.outputs.image_tag }}|g" deployment.yaml
     - name: Login to Azure Container Registry
       uses: azure/docker-login@v1
       with:
-        login-server: test0107.azurecr.io
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
+        login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+        
     
     - name: Build Docker image
-      run: |
-        docker build -t test0107.azurecr.io/test:${{ github.sha }} .
-        docker push test0107.azurecr.io/test:${{ github.sha }}
-    - name: Pull Docker image from ACR
-      run: |
-        docker pull test0107.azurecr.io/test:${{ github.sha }}
-
-    - name: Log in to Azure
+      run: | 
+         docker build -t asg:${{ steps.generate_tag.outputs.image_tag }} .
+         docker tag asg:${{ steps.generate_tag.outputs.image_tag }} ${{ secrets.REGISTRY_LOGIN_SERVER }}/asg:${{ steps.generate_tag.outputs.image_tag }}
+         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/asg:${{ steps.generate_tag.outputs.image_tag }}
+    
+    - name: Azure CLI login
       uses: azure/login@v1
       with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+       creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Set kubectl context
-      uses: azure/aks-set-context@v1
-      with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-          cluster-name: project
-          resource-group: test
+    - name: Set AKS context
+      run: az aks get-credentials --resource-group Naveen --name nanitest
+
+    - name: Deploy to AKS
+      run: kubectl apply -f deployment.yaml
 
    # - name: Apply Kubernetes Secret
    #   run: |
      #     kubectl apply -f path/to/acr-secret.yaml
 
-    - name: Deploy to AKS
-      run: |
-          kubectl apply -f azure-vote-all-in-one-redis.yaml
+   # - name: Deploy to AKS
+   #   run: |
+          #kubectl apply -f azure-vote-all-in-one-redis.yaml

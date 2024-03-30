@@ -47,7 +47,7 @@ jobs:
       run: az aks get-credentials --resource-group Naveen --name nanitest
 
     - name: Deploy to AKS
-      run: kubectl apply -f deployment.yaml
+      run: kubectl apply -f azure-vote-all-in-one-redis.yaml
 
    # - name: Apply Kubernetes Secret
    #   run: |

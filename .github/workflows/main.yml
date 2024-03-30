@@ -35,7 +35,7 @@ jobs:
     - name: Build Docker image
       run: | 
         # docker build -t vote:${{ steps.generate_tag.outputs.image_tag }} .
-        docker build -t vote:${{ steps.generate_tag.outputs.image_tag }} ./azure-vote
+        docker build -t vote:${{ steps.generate_tag.outputs.image_tag }} ./azure-vote/azure-vote
          docker tag vote:${{ steps.generate_tag.outputs.image_tag }} ${{ secrets.REGISTRY_LOGIN_SERVER }}/vote:${{ steps.generate_tag.outputs.image_tag }}
          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/vote:${{ steps.generate_tag.outputs.image_tag }}
     

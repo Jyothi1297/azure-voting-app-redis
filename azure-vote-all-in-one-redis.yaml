@@ -17,7 +17,7 @@ spec:
       containers:
       - name: azure-vote-back
         image: nani01071993.azurecr.io/vote:latest
-         imagePullPolicy: Always
+        # imagePullPolicy: Always
       #  env:
      #   - name: ALLOW_EMPTY_PASSWORD
    #       value: "yes"

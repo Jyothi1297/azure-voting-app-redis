@@ -1,10 +1,10 @@
 name: Deploy to AKS from ACR
 
+#name: build_deploy_aks
 on:
   push:
-    branches:
-      - main  # Adjust branch name as needed
-
+    paths:
+      - "azure-vote/**"
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
